@@ -1,6 +1,4 @@
 // src/services/clima.ts
-import { $ } from '@builder.io/qwik';
-
 const API_BASE_URL = 'https://api.open-meteo.com/v1/forecast';
 
 //Funcion de ver la temperatura, el signo $ en qwik indica
