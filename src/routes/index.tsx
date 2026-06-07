@@ -1,6 +1,6 @@
 import { component$, useStore, $ } from '@builder.io/qwik';
 //Los imports de qwik se hacen con $ para que el código se ejecute solo cuando se invoca la función, no al cargar la página
-import { fetchTemperatura$, fetchPrecipitaciones$ } from '../services/clima';
+import { fetchTemperatura, fetchPrecipitaciones} from '../services/clima';
 
 // Para usar bien la api mapeamos las ciudades con sus coordenadas.
 // Se pueden agregar más para agregar más opciones al desplegable
@@ -26,7 +26,7 @@ export default component$(() => {
     const geo = CIUDADES[state.ciudadSeleccionada];
     
     try {
-      state.tempData = await fetchTemperatura$(geo.lat, geo.lon);
+      state.tempData = await fetchTemperatura(geo.lat, geo.lon);
     } catch {
       state.tempData = null;
     } finally {
@@ -40,7 +40,7 @@ export default component$(() => {
     const geo = CIUDADES[state.ciudadSeleccionada];
 
     try {
-      state.precipData = await fetchPrecipitaciones$(geo.lat, geo.lon);
+      state.precipData = await fetchPrecipitaciones(geo.lat, geo.lon);
     } catch {
       state.precipData = null;
     } finally {

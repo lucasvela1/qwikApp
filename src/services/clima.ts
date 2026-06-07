@@ -5,7 +5,7 @@ const API_BASE_URL = 'https://api.open-meteo.com/v1/forecast';
 
 //Funcion de ver la temperatura, el signo $ en qwik indica
 //que esta funcion solo se ejecuta en el cliente y cuando se invoca
-export const fetchTemperatura$ = $(async (lat: number, lon: number) => {
+export const fetchTemperatura = async (lat: number, lon: number) => {
   try {
     const res = await fetch(
       `${API_BASE_URL}?latitude=${lat}&longitude=${lon}&current=temperature_2m`
@@ -16,11 +16,11 @@ export const fetchTemperatura$ = $(async (lat: number, lon: number) => {
     console.error("Error al traer temperatura:", error);
     throw error;
   }
-});
+};
 
 //Al igual que ver temperatura, la logica queda en el lado servidor 
 //y solo se ejecuta cuando se invoca la funcion, no al cargar la pagina
-export const fetchPrecipitaciones$ = $(async (lat: number, lon: number) => {
+export const fetchPrecipitaciones = async (lat: number, lon: number) => {
   try {
     const res = await fetch(
       `${API_BASE_URL}?latitude=${lat}&longitude=${lon}&current=precipitation`
@@ -31,4 +31,4 @@ export const fetchPrecipitaciones$ = $(async (lat: number, lon: number) => {
     console.error("Error al traer precipitaciones:", error);
     throw error;
   }
-});
+};
