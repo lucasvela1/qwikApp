@@ -10,9 +10,25 @@ const CIUDADES = {
   tolhuin: { name: 'Tolhuin', lat: -54.5106, lon: -67.1923, emoji: '🌲' },
 };
 
+//razon por la que no cambiaba el nombre de la ciudad en el modal
+/*Cuando se ejecutan las funciones verTemperatura o verPrecipitaciones, 
+lo primero que hacen es guardar una referencia fija de la ciudad en una 
+variable local (const geo = CIUDADES[state.ciudadSeleccionada];), 
+pero el modal se queda apuntando directamente al diccionario global 
+usando la clave del estado. A veces, al pasar esa propiedad directo a un 
+componente hijo, Qwik pierde el hilo de la reactividad del string si no se 
+lee correctamente en el momento del renderizado, o si el modal se inicializó 
+antes del cambio.
+
+Además, hay otro detalle: cuando abrís el modal, la API tarda un cachito en 
+responder (mientras state.loading es true). Si el modal se renderiza 
+inmediatamente antes de que terminen de bajarse los datos, puede quedar 
+congelado con el último valor renderizado de forma estática.*/
+
 export default component$(() => {
   const state = useStore({
     ciudadSeleccionada: 'ushuaia' as keyof typeof CIUDADES,
+    ciudadModal: 'Ushuaia',
     loading: false,
     tempData: null as number | null,
     precipData: null as number | null,
@@ -24,7 +40,7 @@ export default component$(() => {
     state.loading = true;
     state.showModalTemp = true;
     const geo = CIUDADES[state.ciudadSeleccionada];
-    
+    state.ciudadModal = geo.name;
     try {
       state.tempData = await fetchTemperatura(geo.lat, geo.lon);
     } catch {
@@ -38,7 +54,7 @@ export default component$(() => {
     state.loading = true;
     state.showModalPrecip = true;
     const geo = CIUDADES[state.ciudadSeleccionada];
-
+    state.ciudadModal = geo.name;
     try {
       state.precipData = await fetchPrecipitaciones(geo.lat, geo.lon);
     } catch {
@@ -87,6 +103,7 @@ export default component$(() => {
             style={buttonStyle}
             class="btn-primary"
           >
+            <span class="shine"></span>
             <span style={buttonIconStyle}>🌡️</span>
             Temperatura
           </button>
@@ -95,7 +112,8 @@ export default component$(() => {
             style={buttonStyle}
             class="btn-secondary"
           >
-            <span style={buttonIconStyle}>💧</span>
+            <span class="shine"></span>
+            <span style={buttonIconStyle}>☔</span>
             Precipitaciones
           </button>
         </div>
@@ -104,7 +122,7 @@ export default component$(() => {
       {/* Modales */}
       <WeatherModal
         isOpen={state.showModalTemp}
-        title={CIUDADES[state.ciudadSeleccionada].name}
+        title={state.ciudadModal}
         emoji="🌡️"
         value={state.tempData}
         unit="°C"
@@ -117,7 +135,7 @@ export default component$(() => {
 
       <WeatherModal
         isOpen={state.showModalPrecip}
-        title={CIUDADES[state.ciudadSeleccionada].name}
+        title={state.ciudadModal}
         emoji="💧"
         value={state.precipData}
         unit="milímetros"
@@ -136,20 +154,23 @@ export default component$(() => {
 const containerStyle = {
   minHeight: '100vh',
   padding: '20px',
-  background: 'linear-gradient(135deg, #f5f7fa 0%, #c3d4e6 100%)',
+  /*background: 'linear-gradient(135deg, #f5f7fa 0%, #c3d4e6 100%)',*/
   fontFamily: "'Inter', sans-serif",
   position: 'relative' as const,
   overflow: 'hidden',
+  display: 'flex',
+  flexDirection: 'column' as const,   
+  justifyContent: 'center',
+  alignItems: 'center',
 };
 
 const bgDecorativeStyle = {
   position: 'fixed' as const,
-  top: '-50%',
-  right: '-10%',
+  
   width: '800px',
   height: '800px',
   borderRadius: '50%',
-  background: 'radial-gradient(circle, rgba(41, 128, 185, 0.08) 0%, transparent 70%)',
+  background: 'radial-gradient(circle, rgba(41, 128, 185, 0.6) 0%, transparent 70%)',
   pointerEvents: 'none' as const,
   zIndex: 0,
 };
@@ -165,25 +186,26 @@ const titleStyle = {
   fontSize: '48px',
   fontWeight: 700,
   fontFamily: "'Syne', sans-serif",
-  color: '#1a3a52',
+  color: '#fff',
   marginBottom: '8px',
   letterSpacing: '-1px',
 };
 
 const subtitleStyle = {
   fontSize: '16px',
-  color: '#5a7285',
+  color: '#d3ebffff',
   fontWeight: 400,
   letterSpacing: '0.5px',
 };
 
 const cardStyle = {
   maxWidth: '500px',
-  margin: '0 auto 40px',
-  background: 'rgba(53, 105, 143, 0.95)',
+  width: '100%', //para mejorar el responsive
+  margin: '0 0 40px',
+  background: 'rgba(53, 105, 143, 0.75)',
   borderRadius: '20px',
   padding: '40px 30px',
-  boxShadow: '0 20px 60px rgba(26, 58, 82, 0.3)',
+  boxShadow: '0 20px 60px rgba(169, 212, 245, 0.3)',
   backdropFilter: 'blur(10px)',
   position: 'relative' as const,
   zIndex: 1,
@@ -228,9 +250,9 @@ const buttonStyle = {
   padding: '14px 20px',
   fontSize: '15px',
   fontWeight: 600,
-  border: 'none',
-  borderRadius: '12px',
-  color: '#000000',
+  border: '1px solid rgba(255,255,255,0.15)',
+  borderRadius: '16px',
+  color: '#000',
   cursor: 'pointer',
   display: 'flex' as const,
   alignItems: 'center' as const,
@@ -238,9 +260,12 @@ const buttonStyle = {
   gap: '8px',
   transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
   fontFamily: "'Inter', sans-serif",
-  boxShadow: '0 4px 15px rgba(0, 0, 0, 0.2)',
+  /*boxShadow: '0 4px 10px rgba(255, 255, 255, 0.2)',*/
+  backdropFilter: 'blur(10px)',
+  position: 'relative' as const,
+  overflow: 'hidden' as const,
 };
 
 const buttonIconStyle = {
-  fontSize: '18px',
+  fontSize: '20px',
 };

@@ -1,4 +1,5 @@
 import { component$, QRL } from '@builder.io/qwik';
+import WeatherLoader from './WeatherLoader';
 
 interface WeatherModalProps {
   isOpen: boolean;
@@ -17,33 +18,60 @@ export default component$<WeatherModalProps>(
     return (
       <div style={modalOverlayStyle}>
         <div style={modalContentStyle} class="modal-enter">
-          <button 
-            onClick$={onClose$}
-            style={closeButtonStyle}
-            aria-label="Cerrar modal"
-          >
-            ✕
-          </button>
-
-          <div style={modalHeaderStyle}>
-            <div style={modalEmojiStyle}>{emoji}</div>
-            <h2 style={modalTitleStyle}>{title}</h2>
+          <div>
+            <button 
+              onClick$={onClose$}
+              style={closeButtonStyle}
+              aria-label="Cerrar modal"
+            >
+              ✕
+            </button>
           </div>
 
           <div style={modalBodyStyle}>
             {loading ? (
               <div style={loaderStyle}>
-                <div style={spinnerStyle}></div>
+                <WeatherLoader
+                  size="md"
+                  speedFactor={1}
+                />
                 <p>Cargando datos...</p>
               </div>
             ) : value !== null ? (
-              <div style={valueContainerStyle}>
-                <p style={modalValueStyle}>
-                  {value}<span style={unitStyle}>{unit}</span>
-                </p>
-              </div>
+              <>
+                  <div style={modalHeaderStyle}>
+                    <div style={titleHeaderStyle}>
+                      <span style={emojiHeaderStyle}>
+                        {emoji}
+                      </span>
+                      <h2 style={modalTitleStyle}>
+                        {title}
+                      </h2>
+                    </div>
+                    <div style={weatherContainerStyle}>
+                      <WeatherLoader
+                        size="lg"
+                        speedFactor={1}
+                      />
+                    </div>
+                  </div>
+                  <div style={modalDataStyle}>
+                    <p style={modalValueStyle}>
+                      {value}
+                    </p>
+                    <span style={unitStyle}>
+                      {unit}
+                    </span>
+                  </div>
+              </>
             ) : (
-              <p style={errorStyle}>No se pudo cargar los datos</p>
+              <div style={loaderStyle}>
+                <WeatherLoader
+                  size="md"
+                  speedFactor={1}
+                />
+                <p style={errorStyle}>No se pudo cargar los datos</p>
+              </div>
             )}
           </div>
         </div>
@@ -81,6 +109,14 @@ const modalContentStyle = {
   color: '#1a3a52',
 };
 
+const valueContainerStyle = {
+  display: 'flex' as const,
+  flexDirection: 'column' as const,
+  alignItems: 'baseline' as const,
+  justifyContent: 'center' as const,
+  gap: '0',
+};
+
 const closeButtonStyle = {
   position: 'absolute' as const,
   top: '16px',
@@ -101,18 +137,33 @@ const closeButtonStyle = {
 };
 
 const modalHeaderStyle = {
-  padding: '40px 32px 24px',
+  position: 'relative' as const,
+  display: 'flex' as const,
+  width: '100%',
+  alignItems: 'center' as const,
+  padding: '30px',
   background: 'linear-gradient(135deg, #f5f7fa 0%, #e8f0f8 100%)',
-  textAlign: 'center' as const,
 };
 
-const modalEmojiStyle = {
-  fontSize: '48px',
-  marginBottom: '12px',
+const weatherContainerStyle = {
+  position: 'absolute' as const,
+  right: '-30px',
+  top: '-20px',
+  transform: 'scale(0.65)',
+}
+
+const titleHeaderStyle = {
+  display: 'flex' as const,
+  alignItems: 'center' as const,
+  gap: '10px',
+}
+
+const emojiHeaderStyle = {
+  fontSize: '32px',
 };
 
 const modalTitleStyle = {
-  fontSize: '22px',
+  fontSize: '35px',
   fontWeight: 700,
   fontFamily: "'Syne', sans-serif",
   color: '#1a3a52',
@@ -120,16 +171,10 @@ const modalTitleStyle = {
 };
 
 const modalBodyStyle = {
-  padding: '40px 32px',
+  margin: 0,
   textAlign: 'center' as const,
 };
 
-const valueContainerStyle = {
-  display: 'flex' as const,
-  alignItems: 'baseline' as const,
-  justifyContent: 'center' as const,
-  gap: '0',
-};
 
 const modalValueStyle = {
   fontSize: '56px',
@@ -139,6 +184,14 @@ const modalValueStyle = {
   margin: '0',
   lineHeight: 1,
 };
+
+const modalDataStyle = {
+  display: 'flex' as const,
+  justifyContent: 'center' as const,
+  alignItems: 'center' as const,
+  padding: '40px',
+  gap: '4px',
+}
 
 const unitStyle = {
   fontSize: '32px',
