@@ -24,39 +24,74 @@ html {
 body {
   padding: 0;
   line-height: inherit;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3d4e6 100%);
+  /*background: linear-gradient(135deg, #f5f7fa 0%, #c3d4e6 100%);*/
   min-height: 100vh;
   overflow-x: hidden;
 }
 
 /* Botones primarios */
 .btn-primary {
-  background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%);
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  background: linear-gradient(
+    135deg,
+    #ffd6c2 0%,
+    #ffbfa3 100%
+  );
+  color: #7a3e1d;
+  /*background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);*/
 }
 
 .btn-primary:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 24px rgba(255, 107, 53, 0.4);
+  transform: translateY(-3px) scale(1.05) rotate(2deg);
+  box-shadow: 0 15px 30px rgba(255, 107, 53, 0.35),
+              0 0 20px rgba(255, 107, 53, 0.2);
+  border-color: rgba(255,255,255,0.5);
 }
 
 .btn-primary:active {
-  transform: translateY(-1px);
+  transform: scale(0.97);
 }
 
 /* Botones secundarios */
 .btn-secondary {
-  background: linear-gradient(135deg, #00d4ff 0%, #00b4d8 100%);
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  background: linear-gradient(
+    135deg,
+    #d6f4ff 0%,
+    #b8ebff 100%
+  );
+  color: #0c5a73;
+  /*background: linear-gradient(135deg, #00d4ff 0%, #00b4d8 100%);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);*/
 }
 
 .btn-secondary:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 24px rgba(0, 180, 216, 0.4);
+  transform: translateY(-3px) scale(1.05) rotate(2deg);
+  box-shadow: 0 15px 30px rgba(0, 180, 216, 0.35),
+              0 0 20px rgba(0, 180, 216, 0.2);
+  border-color: rgba(255,255,255,0.5);
 }
 
 .btn-secondary:active {
-  transform: translateY(-1px);
+  transform: scale(0.97);
+}
+
+.shine {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255,255,255,.2),
+    transparent
+  );
+
+  transform: translateX(-100%);
+  transition: transform .7s ease;
+}
+
+.btn-primary:hover .shine,
+.btn-secondary:hover .shine {
+  transform: translateX(100%);
 }
 
 /* Animaciones de modal */
@@ -115,4 +150,296 @@ select option {
   color: #1a3a52;
   padding: 12px;
   line-height: 1.5;
+}
+
+.loader-weather-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin: 16px auto;
+}
+
+.loader-weather-container.size-sm { transform: scale(0.6); width: 90px; height: 90px; }
+.loader-weather-container.size-md { transform: scale(1); width: 140px; height: 140px; }
+.loader-weather-container.size-lg { transform: scale(1.5); width: 220px; height: 220px; }
+
+.loader-cloud {
+  width: 140px;
+  position: absolute;
+}
+
+.loader-cloud.front {
+  padding-top: 25px;
+  margin-left: -20px;
+  display: inline;
+  z-index: 11;
+  animation: clouds 8s infinite ease-in-out;
+}
+
+.loader-cloud.back {
+  margin-top: -35px;
+  margin-left: 60px;
+  z-index: 9;
+  animation: clouds 12s infinite ease-in-out;
+}
+
+.loader-right-front {
+  width: 30px;
+  height: 30px;
+  border-radius: 50% 50% 50% 0%;
+  background-color: #4c9beb;
+  display: inline-block;
+  margin-left: -15px;
+}
+
+.loader-left-front {
+  width: 45px;
+  height: 45px;
+  border-radius: 50% 50% 0% 50%;
+  background-color: #4c9beb;
+  display: inline-block;
+}
+
+.loader-right-back {
+  width: 35px;
+  height: 35px;
+  border-radius: 50% 50% 50% 0%;
+  background-color: #7bb5ef;
+  display: inline-block;
+  margin-left: -12px;
+}
+
+.loader-left-back {
+  width: 22px;
+  height: 22px;
+  border-radius: 50% 50% 0% 50%;
+  background-color: #7bb5ef;
+  display: inline-block;
+}
+
+.loader-sun {
+  width: 65px;
+  height: 65px;
+  background: linear-gradient(to right, #fcbb04ff, #fffc00);
+  border-radius: 50%;
+  display: inline;
+  position: absolute;
+  z-index: 10;
+}
+
+.loader-sunshine {
+  animation: sunshines 2s infinite ease-out;
+  z-index: 8;
+}
+
+@keyframes sunshines {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+@keyframes clouds {
+  0% { transform: translateX(8px); }
+  50% { transform: translateX(0px); }
+  100% { transform: translateX(8px); }
+}
+
+.rain-bg {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+
+  background: #0b1d2a;
+}
+
+
+.rain-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  backdrop-filter: blur(1em) brightness(6);
+  background-image: radial-gradient(
+    circle at 50% 50%,
+    #0000 0,
+    #0000 2px,
+    hsl(0 0 4%) 2px
+  );
+  background-size: 8px 8px;
+}
+
+.rain-bg {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  --c: #09f;
+  background-color: #000;
+  background-image: radial-gradient(4px 100px at 0px 235px, var(--c), #0000),
+    radial-gradient(4px 100px at 300px 235px, var(--c), #0000),
+    radial-gradient(1.5px 1.5px at 150px 117.5px, var(--c) 100%, #0000 150%),
+    radial-gradient(4px 100px at 0px 252px, var(--c), #0000),
+    radial-gradient(4px 100px at 300px 252px, var(--c), #0000),
+    radial-gradient(1.5px 1.5px at 150px 126px, var(--c) 100%, #0000 150%),
+    radial-gradient(4px 100px at 0px 150px, var(--c), #0000),
+    radial-gradient(4px 100px at 300px 150px, var(--c), #0000),
+    radial-gradient(1.5px 1.5px at 150px 75px, var(--c) 100%, #0000 150%),
+    radial-gradient(4px 100px at 0px 253px, var(--c), #0000),
+    radial-gradient(4px 100px at 300px 253px, var(--c), #0000),
+    radial-gradient(1.5px 1.5px at 150px 126.5px, var(--c) 100%, #0000 150%),
+    radial-gradient(4px 100px at 0px 204px, var(--c), #0000),
+    radial-gradient(4px 100px at 300px 204px, var(--c), #0000),
+    radial-gradient(1.5px 1.5px at 150px 102px, var(--c) 100%, #0000 150%),
+    radial-gradient(4px 100px at 0px 134px, var(--c), #0000),
+    radial-gradient(4px 100px at 300px 134px, var(--c), #0000),
+    radial-gradient(1.5px 1.5px at 150px 67px, var(--c) 100%, #0000 150%),
+    radial-gradient(4px 100px at 0px 179px, var(--c), #0000),
+    radial-gradient(4px 100px at 300px 179px, var(--c), #0000),
+    radial-gradient(1.5px 1.5px at 150px 89.5px, var(--c) 100%, #0000 150%),
+    radial-gradient(4px 100px at 0px 299px, var(--c), #0000),
+    radial-gradient(4px 100px at 300px 299px, var(--c), #0000),
+    radial-gradient(1.5px 1.5px at 150px 149.5px, var(--c) 100%, #0000 150%),
+    radial-gradient(4px 100px at 0px 215px, var(--c), #0000),
+    radial-gradient(4px 100px at 300px 215px, var(--c), #0000),
+    radial-gradient(1.5px 1.5px at 150px 107.5px, var(--c) 100%, #0000 150%),
+    radial-gradient(4px 100px at 0px 281px, var(--c), #0000),
+    radial-gradient(4px 100px at 300px 281px, var(--c), #0000),
+    radial-gradient(1.5px 1.5px at 150px 140.5px, var(--c) 100%, #0000 150%),
+    radial-gradient(4px 100px at 0px 158px, var(--c), #0000),
+    radial-gradient(4px 100px at 300px 158px, var(--c), #0000),
+    radial-gradient(1.5px 1.5px at 150px 79px, var(--c) 100%, #0000 150%),
+    radial-gradient(4px 100px at 0px 210px, var(--c), #0000),
+    radial-gradient(4px 100px at 300px 210px, var(--c), #0000),
+    radial-gradient(1.5px 1.5px at 150px 105px, var(--c) 100%, #0000 150%);
+  background-size:
+    300px 235px,
+    300px 235px,
+    300px 235px,
+    300px 252px,
+    300px 252px,
+    300px 252px,
+    300px 150px,
+    300px 150px,
+    300px 150px,
+    300px 253px,
+    300px 253px,
+    300px 253px,
+    300px 204px,
+    300px 204px,
+    300px 204px,
+    300px 134px,
+    300px 134px,
+    300px 134px,
+    300px 179px,
+    300px 179px,
+    300px 179px,
+    300px 299px,
+    300px 299px,
+    300px 299px,
+    300px 215px,
+    300px 215px,
+    300px 215px,
+    300px 281px,
+    300px 281px,
+    300px 281px,
+    300px 158px,
+    300px 158px,
+    300px 158px,
+    300px 210px,
+    300px 210px,
+    300px 210px;
+  animation: hi 150s linear infinite;
+}
+
+@keyframes hi {
+  0% {
+    background-position:
+      0px 220px,
+      3px 220px,
+      151.5px 337.5px,
+      25px 24px,
+      28px 24px,
+      176.5px 150px,
+      50px 16px,
+      53px 16px,
+      201.5px 91px,
+      75px 224px,
+      78px 224px,
+      226.5px 350.5px,
+      100px 19px,
+      103px 19px,
+      251.5px 121px,
+      125px 120px,
+      128px 120px,
+      276.5px 187px,
+      150px 31px,
+      153px 31px,
+      301.5px 120.5px,
+      175px 235px,
+      178px 235px,
+      326.5px 384.5px,
+      200px 121px,
+      203px 121px,
+      351.5px 228.5px,
+      225px 224px,
+      228px 224px,
+      376.5px 364.5px,
+      250px 26px,
+      253px 26px,
+      401.5px 105px,
+      275px 75px,
+      278px 75px,
+      426.5px 180px;
+  }
+
+  to {
+    background-position:
+      0px 6800px,
+      3px 6800px,
+      151.5px 6917.5px,
+      25px 13632px,
+      28px 13632px,
+      176.5px 13758px,
+      50px 5416px,
+      53px 5416px,
+      201.5px 5491px,
+      75px 17175px,
+      78px 17175px,
+      226.5px 17301.5px,
+      100px 5119px,
+      103px 5119px,
+      251.5px 5221px,
+      125px 8428px,
+      128px 8428px,
+      276.5px 8495px,
+      150px 9876px,
+      153px 9876px,
+      301.5px 9965.5px,
+      175px 13391px,
+      178px 13391px,
+      326.5px 13540.5px,
+      200px 14741px,
+      203px 14741px,
+      351.5px 14848.5px,
+      225px 18770px,
+      228px 18770px,
+      376.5px 18910.5px,
+      250px 5082px,
+      253px 5082px,
+      401.5px 5161px,
+      275px 6375px,
+      278px 6375px,
+      426.5px 6480px;
+  }
+}
+
+
+.rain-bg > * {
+  position: relative;
+  z-index: 1;
 }
