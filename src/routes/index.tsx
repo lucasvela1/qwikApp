@@ -1,4 +1,4 @@
-import { component$, useStore, $ } from '@builder.io/qwik';
+import { component$, useStore, $, useVisibleTask$ } from '@builder.io/qwik';
 import { fetchPrecipitaciones } from '~/services/precipitaciones';
 import { fetchTemperatura } from '~/services/temperaturas';
 import WeatherModal from '../components/WeatherModal';
@@ -6,28 +6,82 @@ import WeatherModal from '../components/WeatherModal';
 // Para usar bien la api mapeamos las ciudades con sus coordenadas.
 // Se pueden agregar más para agregar más opciones al desplegable
 const CIUDADES = {
-  ushuaia: { name: 'Ushuaia', lat: -54.8019, lon: -68.303, emoji: '🏔️' },
-  rio_grande: { name: 'Río Grande', lat: -53.7877, lon: -67.7032, emoji: '🌾' },
-  tolhuin: { name: 'Tolhuin', lat: -54.5106, lon: -67.1923, emoji: '🌲' },
+  ushuaia: { nombre: 'Ushuaia', lat: -54.8019, lon: -68.303, emoji: '🏔️' },
+  rio_grande: { nombre: 'Río Grande', lat: -53.7877, lon: -67.7032, emoji: '🌾' },
+  tolhuin: { nombre: 'Tolhuin', lat: -54.5106, lon: -67.1923, emoji: '🌲' },
 };
 
+//No usamos el const anterior si quueremos agregar nuevas
+interface Ciudad {
+  nombre: string;
+  lat: number;
+  lon: number;
+  emoji: string;
+}
 
 export default component$(() => {
   const state = useStore({
-    ciudadSeleccionada: 'ushuaia' as keyof typeof CIUDADES,
+    ciudades: {...CIUDADES} as Record<string, Ciudad>, //Haceemos un spread para agregar más ciudades como copia
+    ciudadSeleccionada: 'ushuaia' as string, //Ciudad por defecto al cargar la pagina
     ciudadModal: 'Ushuaia',
     loading: false,
     tempData: null as number | null,
     precipData: null as number | null,
     showModalTemp: false,
     showModalPrecip: false,
+    nuevoNombreCiudad: '',
+    nuevaLatitud: '',
+    nuevaLongitud: '',
   }); //El estado inicial, qwik lo cambia si es necesario pero no se pierde al recargar la pagina
+
+    useVisibleTask$(() => {
+     const locales = localStorage.getItem('ciudadesCustom');
+       if (locales) {
+         try {
+           const parsedCustom = JSON.parse(locales);
+           state.ciudades = { ...CIUDADES, ...parsedCustom };
+          } catch (e) {
+          console.error("Error al parsear ciudades del localStorage", e);
+        }
+      }
+     });
+
+  const agregarCiudad = $(() => {
+    const nombre = state.nuevoNombreCiudad.trim();
+    const lat = parseFloat(state.nuevaLatitud);
+    const lon = parseFloat(state.nuevaLongitud);
+    //Sacamos los datos del estado, validamos que no esten vacios y que lat y lon sean numeros
+    if (!nombre || isNaN(lat) || isNaN(lon)) {
+      alert("Por favor completa todos los campos con valores numéricos válidos.");
+      return;
+    }
+    //La key es el nombre en minuscula y con guiones bajos para evitar problemas con espacios o mayusculas, ademas de ser unica para cada ciudad
+    const key = nombre.toLowerCase().replace(/\s+/g, '_');
+    
+    const nuevaCiudad: Ciudad = {
+      nombre,
+      lat,
+      lon,
+      emoji: '🏙️'
+    };
+    state.ciudades[key] = nuevaCiudad;
+    state.ciudadSeleccionada = key;
+    //Guardamos la pagina en local storage
+    const locales = JSON.parse(localStorage.getItem('ciudadesCustom') || '{}');
+    locales[key] = state.ciudades[key];
+    localStorage.setItem('ciudadesCustom', JSON.stringify(locales));
+    //limpiar campos
+    state.nuevoNombreCiudad = '';
+    state.nuevaLatitud = '';
+    state.nuevaLongitud = '';
+  });
+
 
   const verTemperatura = $(async () => {
     state.loading = true;
     state.showModalTemp = true;
-    const geo = CIUDADES[state.ciudadSeleccionada];
-    state.ciudadModal = geo.name;
+    const geo = state.ciudades[state.ciudadSeleccionada];
+    state.ciudadModal = geo.nombre;
     try {
       state.tempData = await fetchTemperatura(geo.lat, geo.lon);
     } catch {
@@ -40,8 +94,8 @@ export default component$(() => {
   const verPrecipitaciones = $(async () => {
     state.loading = true;
     state.showModalPrecip = true;
-    const geo = CIUDADES[state.ciudadSeleccionada];
-    state.ciudadModal = geo.name;
+    const geo = state.ciudades[state.ciudadSeleccionada];
+    state.ciudadModal = geo.nombre;
     try {
       state.precipData = await fetchPrecipitaciones(geo.lat, geo.lon);
     } catch {
@@ -73,13 +127,15 @@ export default component$(() => {
             id="city-select"
             value={state.ciudadSeleccionada}
             onChange$={(e, currentTarget) => {
-              state.ciudadSeleccionada = currentTarget.value as keyof typeof CIUDADES;
+              state.ciudadSeleccionada = currentTarget.value as string;
             }}
             style={selectStyle}
           >
-            <option value="ushuaia">🏔️ Ushuaia</option>
-            <option value="rio_grande">🌾 Río Grande</option>
-            <option value="tolhuin">🌲 Tolhuin</option>
+            {Object.entries(state.ciudades).map(([key, ciudad]) => (
+              <option key={key} value={key}>
+                {`${ciudad.emoji} ${ciudad.nombre}`}
+              </option>
+            ))}
           </select>
         </div>
 
@@ -105,6 +161,44 @@ export default component$(() => {
           </button>
         </div>
       </div>
+
+      <hr style= {separadorStyle}/>
+      <div style={formContainerStyle}>
+          <h3 style={formTitleStyle}>Agregar nueva ubicación</h3>
+          
+          <div style={inputGroupStyle}>
+            <input 
+              type="text" 
+              placeholder="Nombre de la ciudad" 
+              value={state.nuevoNombreCiudad}
+              onInput$={(e, el) => state.nuevoNombreCiudad = el.value}
+              style={inputStyle}
+            />
+          </div>
+
+          <div style={inlineInputsStyle}>
+            <input 
+              type="number" 
+              step="any"
+              placeholder="Latitud (ej: -54.8)" 
+              value={state.nuevaLatitud}
+              onInput$={(e, el) => state.nuevaLatitud = el.value}
+              style={inputStyle}
+            />
+            <input 
+              type="number" 
+              step="any"
+              placeholder="Longitud (ej: -68.3)" 
+              value={state.nuevaLongitud}
+              onInput$={(e, el) => state.nuevaLongitud = el.value}
+              style={inputStyle}
+            />
+          </div>
+
+          <button onClick$={agregarCiudad} style={addButtonStyle}>
+            ➕ Guardar ubicación
+          </button>
+        </div>
 
       {/* Modales */}
       <WeatherModal
@@ -255,4 +349,57 @@ const buttonStyle = {
 
 const buttonIconStyle = {
   fontSize: '20px',
+};
+
+const separadorStyle = {
+  width: '80%',
+  border: '0',
+  margin: '30px 0',
+  background: 'rgba(255, 255, 255, 0.2)',
+};
+
+const formContainerStyle = {
+  display: 'flex',
+  flexDirection: 'column' as const,
+  gap: '12px',
+};
+
+const formTitleStyle = {
+  fontSize: '16px',
+  fontWeight: 600,
+  color: '#ffffff',
+  marginBottom: '4px',
+};
+
+const inputGroupStyle = {
+  width: '100%',
+};
+
+const inlineInputsStyle = {
+  display: 'flex',
+  gap: '12px',
+};
+
+const inputStyle = {
+  width: '100%',
+  padding: '10px 14px',
+  fontSize: '14px',
+  border: '1px solid rgba(255,255,255,0.3)',
+  borderRadius: '8px',
+  background: 'rgba(255, 255, 255, 0.9)',
+  color: '#1a3a52',
+  fontFamily: "'Inter', sans-serif",
+};
+
+const addButtonStyle = {
+  padding: '12px',
+  fontSize: '14px',
+  fontWeight: 600,
+  background: '#2ecc71',
+  color: '#fff',
+  border: 'none',
+  borderRadius: '8px',
+  cursor: 'pointer',
+  transition: 'background 0.2s ease',
+  marginTop: '6px',
 };
