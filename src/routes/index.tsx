@@ -1,5 +1,6 @@
 import { component$, useStore, $ } from '@builder.io/qwik';
-import { fetchTemperatura, fetchPrecipitaciones } from '../services/clima';
+import { fetchPrecipitaciones } from '~/services/precipitaciones';
+import { fetchTemperatura } from '~/services/temperaturas';
 import WeatherModal from '../components/WeatherModal';
 
 // Para usar bien la api mapeamos las ciudades con sus coordenadas.
