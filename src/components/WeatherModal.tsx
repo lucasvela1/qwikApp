@@ -109,14 +109,6 @@ const modalContentStyle = {
   color: '#1a3a52',
 };
 
-const valueContainerStyle = {
-  display: 'flex' as const,
-  flexDirection: 'column' as const,
-  alignItems: 'baseline' as const,
-  justifyContent: 'center' as const,
-  gap: '0',
-};
-
 const closeButtonStyle = {
   position: 'absolute' as const,
   top: '16px',
@@ -205,16 +197,6 @@ const loaderStyle = {
   alignItems: 'center' as const,
   justifyContent: 'center',
   padding: '40px 0',
-};
-
-const spinnerStyle = {
-  width: '40px',
-  height: '40px',
-  border: '3px solid rgba(41, 128, 185, 0.2)',
-  borderTop: '3px solid #2980b9',
-  borderRadius: '50%',
-  animation: 'spin 0.8s linear infinite',
-  marginBottom: '16px',
 };
 
 const errorStyle = {
