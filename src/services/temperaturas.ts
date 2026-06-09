@@ -1,6 +1,8 @@
+import { API_URL } from "../constants/api";
+
 export const fetchTemperatura = async (lat: number, lon: number) => {
     try {
-        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m`;
+        const url = `${API_URL}?latitude=${lat}&longitude=${lon}&current=temperature_2m`;
 
         const res = await fetch(url);
         const data = await res.json();

@@ -1,6 +1,8 @@
+import { API_URL } from "../constants/api";
+
 export const fetchPrecipitaciones = async (lat: number, lon: number) => {
     try {
-        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=precipitation`;
+        const url = `${API_URL}?latitude=${lat}&longitude=${lon}&current=precipitation`;
         
         const res = await fetch(url);
         if (!res.ok) {

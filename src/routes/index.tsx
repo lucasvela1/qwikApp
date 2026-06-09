@@ -11,20 +11,6 @@ const CIUDADES = {
   tolhuin: { name: 'Tolhuin', lat: -54.5106, lon: -67.1923, emoji: '🌲' },
 };
 
-//razon por la que no cambiaba el nombre de la ciudad en el modal
-/*Cuando se ejecutan las funciones verTemperatura o verPrecipitaciones, 
-lo primero que hacen es guardar una referencia fija de la ciudad en una 
-variable local (const geo = CIUDADES[state.ciudadSeleccionada];), 
-pero el modal se queda apuntando directamente al diccionario global 
-usando la clave del estado. A veces, al pasar esa propiedad directo a un 
-componente hijo, Qwik pierde el hilo de la reactividad del string si no se 
-lee correctamente en el momento del renderizado, o si el modal se inicializó 
-antes del cambio.
-
-Además, hay otro detalle: cuando abrís el modal, la API tarda un cachito en 
-responder (mientras state.loading es true). Si el modal se renderiza 
-inmediatamente antes de que terminen de bajarse los datos, puede quedar 
-congelado con el último valor renderizado de forma estática.*/
 
 export default component$(() => {
   const state = useStore({
