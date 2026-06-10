@@ -3,15 +3,12 @@ import { fetchPrecipitaciones } from '~/services/precipitaciones';
 import { fetchTemperatura } from '~/services/temperaturas';
 import WeatherModal from '../components/WeatherModal';
 
-// Para usar bien la api mapeamos las ciudades con sus coordenadas.
-// Se pueden agregar más para agregar más opciones al desplegable
 const CIUDADES = {
   ushuaia: { nombre: 'Ushuaia', lat: -54.8019, lon: -68.303, emoji: '🏔️' },
   rio_grande: { nombre: 'Río Grande', lat: -53.7877, lon: -67.7032, emoji: '🌾' },
   tolhuin: { nombre: 'Tolhuin', lat: -54.5106, lon: -67.1923, emoji: '🌲' },
 };
 
-//No usamos el const anterior si quueremos agregar nuevas
 interface Ciudad {
   nombre: string;
   lat: number;
@@ -21,61 +18,28 @@ interface Ciudad {
 
 export default component$(() => {
   const state = useStore({
-    ciudades: {...CIUDADES} as Record<string, Ciudad>, //Haceemos un spread para agregar más ciudades como copia
-    ciudadSeleccionada: 'ushuaia' as string, //Ciudad por defecto al cargar la pagina
+    ciudades: {...CIUDADES} as Record<string, Ciudad>,
+    ciudadSeleccionada: 'ushuaia' as string,
     ciudadModal: 'Ushuaia',
     loading: false,
     tempData: null as number | null,
     precipData: null as number | null,
     showModalTemp: false,
     showModalPrecip: false,
-    nuevoNombreCiudad: '',
-    nuevaLatitud: '',
-    nuevaLongitud: '',
-  }); //El estado inicial, qwik lo cambia si es necesario pero no se pierde al recargar la pagina
-
-    useVisibleTask$(() => {
-     const locales = localStorage.getItem('ciudadesCustom');
-       if (locales) {
-         try {
-           const parsedCustom = JSON.parse(locales);
-           state.ciudades = { ...CIUDADES, ...parsedCustom };
-          } catch (e) {
-          console.error("Error al parsear ciudades del localStorage", e);
-        }
-      }
-     });
-
-  const agregarCiudad = $(() => {
-    const nombre = state.nuevoNombreCiudad.trim();
-    const lat = parseFloat(state.nuevaLatitud);
-    const lon = parseFloat(state.nuevaLongitud);
-    //Sacamos los datos del estado, validamos que no esten vacios y que lat y lon sean numeros
-    if (!nombre || isNaN(lat) || isNaN(lon)) {
-      alert("Por favor completa todos los campos con valores numéricos válidos.");
-      return;
-    }
-    //La key es el nombre en minuscula y con guiones bajos para evitar problemas con espacios o mayusculas, ademas de ser unica para cada ciudad
-    const key = nombre.toLowerCase().replace(/\s+/g, '_');
-    
-    const nuevaCiudad: Ciudad = {
-      nombre,
-      lat,
-      lon,
-      emoji: '🏙️'
-    };
-    state.ciudades[key] = nuevaCiudad;
-    state.ciudadSeleccionada = key;
-    //Guardamos la pagina en local storage
-    const locales = JSON.parse(localStorage.getItem('ciudadesCustom') || '{}');
-    locales[key] = state.ciudades[key];
-    localStorage.setItem('ciudadesCustom', JSON.stringify(locales));
-    //limpiar campos
-    state.nuevoNombreCiudad = '';
-    state.nuevaLatitud = '';
-    state.nuevaLongitud = '';
   });
 
+  // eslint-disable-next-line qwik/no-use-visible-task
+  useVisibleTask$(() => {
+    const locales = localStorage.getItem('ciudadesCustom');
+    if (locales) {
+      try {
+        const parsedCustom = JSON.parse(locales);
+        state.ciudades = { ...CIUDADES, ...parsedCustom };
+      } catch (e) {
+        console.error("Error al parsear ciudades del localStorage", e);
+      }
+    }
+  });
 
   const verTemperatura = $(async () => {
     state.loading = true;
@@ -107,18 +71,14 @@ export default component$(() => {
 
   return (
     <div style={containerStyle}>
-      {/* Background decorativo */}
       <div style={bgDecorativeStyle}></div>
       
-      {/* Header */}
       <header style={headerStyle}>
         <h1 style={titleStyle}>Clima TDF</h1>
         <p style={subtitleStyle}>Tierra del Fuego, Argentina</p>
       </header>
 
-      {/* Card principal */}
       <div style={cardStyle}>
-        {/* Selector de ciudad */}
         <div style={selectorContainerStyle}>
           <label for="city-select" style={labelStyle}>
             Selecciona tu ubicación
@@ -139,7 +99,6 @@ export default component$(() => {
           </select>
         </div>
 
-        {/* Botones de acción */}
         <div style={buttonContainerStyle}>
           <button 
             onClick$={verTemperatura} 
@@ -162,45 +121,6 @@ export default component$(() => {
         </div>
       </div>
 
-      <hr style= {separadorStyle}/>
-      <div style={formContainerStyle}>
-          <h3 style={formTitleStyle}>Agregar nueva ubicación</h3>
-          
-          <div style={inputGroupStyle}>
-            <input 
-              type="text" 
-              placeholder="Nombre de la ciudad" 
-              value={state.nuevoNombreCiudad}
-              onInput$={(e, el) => state.nuevoNombreCiudad = el.value}
-              style={inputStyle}
-            />
-          </div>
-
-          <div style={inlineInputsStyle}>
-            <input 
-              type="number" 
-              step="any"
-              placeholder="Latitud (ej: -54.8)" 
-              value={state.nuevaLatitud}
-              onInput$={(e, el) => state.nuevaLatitud = el.value}
-              style={inputStyle}
-            />
-            <input 
-              type="number" 
-              step="any"
-              placeholder="Longitud (ej: -68.3)" 
-              value={state.nuevaLongitud}
-              onInput$={(e, el) => state.nuevaLongitud = el.value}
-              style={inputStyle}
-            />
-          </div>
-
-          <button onClick$={agregarCiudad} style={addButtonStyle}>
-            ➕ Guardar ubicación
-          </button>
-        </div>
-
-      {/* Modales */}
       <WeatherModal
         isOpen={state.showModalTemp}
         title={state.ciudadModal}
@@ -230,12 +150,9 @@ export default component$(() => {
   );
 });
 
-// ==================== ESTILOS ====================
-
 const containerStyle = {
-  minHeight: '100vh',
+  minHeight: 'calc(100vh - 80px)',
   padding: '20px',
-  /*background: 'linear-gradient(135deg, #f5f7fa 0%, #c3d4e6 100%)',*/
   fontFamily: "'Inter', sans-serif",
   position: 'relative' as const,
   overflow: 'hidden',
@@ -247,7 +164,6 @@ const containerStyle = {
 
 const bgDecorativeStyle = {
   position: 'fixed' as const,
-  
   width: '800px',
   height: '800px',
   borderRadius: '50%',
@@ -281,7 +197,7 @@ const subtitleStyle = {
 
 const cardStyle = {
   maxWidth: '500px',
-  width: '100%', //para mejorar el responsive
+  width: '100%',
   margin: '0 0 40px',
   background: 'rgba(53, 105, 143, 0.75)',
   borderRadius: '20px',
@@ -341,7 +257,6 @@ const buttonStyle = {
   gap: '8px',
   transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
   fontFamily: "'Inter', sans-serif",
-  /*boxShadow: '0 4px 10px rgba(255, 255, 255, 0.2)',*/
   backdropFilter: 'blur(10px)',
   position: 'relative' as const,
   overflow: 'hidden' as const,
@@ -349,57 +264,4 @@ const buttonStyle = {
 
 const buttonIconStyle = {
   fontSize: '20px',
-};
-
-const separadorStyle = {
-  width: '80%',
-  border: '0',
-  margin: '30px 0',
-  background: 'rgba(255, 255, 255, 0.2)',
-};
-
-const formContainerStyle = {
-  display: 'flex',
-  flexDirection: 'column' as const,
-  gap: '12px',
-};
-
-const formTitleStyle = {
-  fontSize: '16px',
-  fontWeight: 600,
-  color: '#ffffff',
-  marginBottom: '4px',
-};
-
-const inputGroupStyle = {
-  width: '100%',
-};
-
-const inlineInputsStyle = {
-  display: 'flex',
-  gap: '12px',
-};
-
-const inputStyle = {
-  width: '100%',
-  padding: '10px 14px',
-  fontSize: '14px',
-  border: '1px solid rgba(255,255,255,0.3)',
-  borderRadius: '8px',
-  background: 'rgba(255, 255, 255, 0.9)',
-  color: '#1a3a52',
-  fontFamily: "'Inter', sans-serif",
-};
-
-const addButtonStyle = {
-  padding: '12px',
-  fontSize: '14px',
-  fontWeight: 600,
-  background: '#2ecc71',
-  color: '#fff',
-  border: 'none',
-  borderRadius: '8px',
-  cursor: 'pointer',
-  transition: 'background 0.2s ease',
-  marginTop: '6px',
 };
