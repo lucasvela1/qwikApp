@@ -33,12 +33,12 @@ export default component$(() => {
     const nombre = state.nuevoNombreCiudad.trim();
     const lat = parseFloat(state.nuevaLatitud);
     const lon = parseFloat(state.nuevaLongitud);
-
+    //Sacamos los datos del estado, validamos que no esten vacios y que lat y lon sean numeros
     if (!nombre || isNaN(lat) || isNaN(lon)) {
       alert("Por favor completa todos los campos con valores numéricos válidos.");
       return;
     }
-
+    //La key es el nombre en minuscula y con guiones bajos para evitar problemas con espacios o mayusculas, ademas de ser unica para cada ciudad
     const key = nombre.toLowerCase().replace(/\s+/g, '_');
     
     const nuevaCiudad: Ciudad = {
@@ -47,11 +47,11 @@ export default component$(() => {
       lon,
       emoji: '🏙️'
     };
-
+    //Guardamos la pagina en local storage
     const locales = JSON.parse(localStorage.getItem('ciudadesCustom') || '{}');
     locales[key] = nuevaCiudad;
     localStorage.setItem('ciudadesCustom', JSON.stringify(locales));
-
+    //limpiar campos
     state.nuevoNombreCiudad = '';
     state.nuevaLatitud = '';
     state.nuevaLongitud = '';

@@ -3,12 +3,15 @@ import { fetchPrecipitaciones } from '~/services/precipitaciones';
 import { fetchTemperatura } from '~/services/temperaturas';
 import WeatherModal from '../components/WeatherModal';
 
+// Para usar bien la api mapeamos las ciudades con sus coordenadas.
+// Se pueden agregar más para agregar más opciones al desplegable
 const CIUDADES = {
   ushuaia: { nombre: 'Ushuaia', lat: -54.8019, lon: -68.303, emoji: '🏔️' },
   rio_grande: { nombre: 'Río Grande', lat: -53.7877, lon: -67.7032, emoji: '🌾' },
   tolhuin: { nombre: 'Tolhuin', lat: -54.5106, lon: -67.1923, emoji: '🌲' },
 };
 
+//No usamos el const anterior si quueremos agregar nuevas
 interface Ciudad {
   nombre: string;
   lat: number;
@@ -18,15 +21,15 @@ interface Ciudad {
 
 export default component$(() => {
   const state = useStore({
-    ciudades: {...CIUDADES} as Record<string, Ciudad>,
-    ciudadSeleccionada: 'ushuaia' as string,
+    ciudades: {...CIUDADES} as Record<string, Ciudad>,//Haceemos un spread para agregar más ciudades como copia
+    ciudadSeleccionada: 'ushuaia' as string, //Ciudad por defecto al cargar la pagina
     ciudadModal: 'Ushuaia',
     loading: false,
     tempData: null as number | null,
     precipData: null as number | null,
     showModalTemp: false,
     showModalPrecip: false,
-  });
+  });//El estado inicial, qwik lo cambia si es necesario pero no se pierde al recargar la pagina
 
   // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(() => {
