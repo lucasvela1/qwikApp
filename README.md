@@ -1,52 +1,137 @@
-# Qwik City App ⚡️
+# Aplicación de Clima con Qwik
 
-- [Qwik Docs](https://qwik.dev/)
-- [Discord](https://qwik.dev/chat)
-- [Qwik GitHub](https://github.com/QwikDev/qwik)
-- [@QwikDev](https://twitter.com/QwikDev)
-- [Vite](https://vitejs.dev/)
+Una aplicación web para consultar información meteorológica (temperatura y precipitaciones) de ciudades argentinas. Está construida con **Qwik**, un framework web de última generación optimizado para el rendimiento, junto con **Qwik City** para el enrutamiento.
 
----
+## 🌦️ Características
 
-## Project Structure
+- **Consulta de clima**: Visualiza temperatura y precipitaciones de ciudades predefinidas
+- **Ciudades por defecto**: Ushuaia, Río Grande y Tolhuin
+- **Agregar ciudades**: Permite agregar nuevas ciudades de forma personalizada
+- **Almacenamiento local**: Guarda las ciudades agregadas en `localStorage`
+- **Interfaz responsive**: Diseño adaptable a diferentes dispositivos
+- **Renderizado en servidor**: SSR (Server-Side Rendering) para mejor SEO y rendimiento
+- **Zero-JS**: Carga inicial mínima de JavaScript
 
-This project is using Qwik with [QwikCity](https://qwik.dev/qwikcity/overview/). QwikCity is just an extra set of tools on top of Qwik to make it easier to build a full site, including directory-based routing, layouts, and more.
+## 🛠️ Tecnologías
 
-Inside your project, you'll see the following directory structure:
+- **Qwik 1.19** - Framework moderno y ultrarrápido
+- **Qwik City 1.19** - Meta-framework con enrutamiento basado en directorios
+- **TypeScript** - Tipado estático para JavaScript
+- **Vite 7** - Herramienta de compilación y bundling
+- **Prettier** - Formateador de código
+- **ESLint** - Linter para validar el código
+
+## 📁 Estructura del Proyecto
 
 ```
-├── public/
-│   └── ...
-└── src/
-    ├── components/
-    │   └── ...
-    └── routes/
-        └── ...
+src/
+├── routes/              # Rutas de la aplicación (enrutamiento basado en directorios)
+│   ├── index.tsx        # Página principal de clima
+│   ├── layout.tsx       # Layout global
+│   └── agregar-ciudad/  # Ruta para agregar ciudades
+│       └── index.tsx
+├── components/          # Componentes reutilizables
+│   ├── RainBackground.tsx
+│   ├── WeatherLoader.tsx
+│   └── WeatherModal.tsx
+├── services/            # Servicios para llamadas API
+│   ├── precipitaciones.ts
+│   └── temperaturas.ts
+├── constants/           # Constantes de configuración
+│   └── api.ts
+├── root.tsx             # Componente raíz
+└── entry.*.tsx          # Puntos de entrada para SSR, preview, etc.
 ```
 
-- `src/routes`: Provides the directory-based routing, which can include a hierarchy of `layout.tsx` layout files, and an `index.tsx` file as the page. Additionally, `index.ts` files are endpoints. Please see the [routing docs](https://qwik.dev/qwikcity/routing/overview/) for more info.
+## 🚀 Instalación y Ejecución
 
-- `src/components`: Recommended directory for components.
+### Requisitos previos
 
-- `public`: Any static assets, like images, can be placed in the public directory. Please see the [Vite public directory](https://vitejs.dev/guide/assets.html#the-public-directory) for more info.
+- Node.js (v18.17 o superior)
+- npm o yarn
 
-## Add Integrations and deployment
+### Pasos de instalación
 
-Use the `npm run qwik add` command to add additional integrations. Some examples of integrations includes: Cloudflare, Netlify or Express Server, and the [Static Site Generator (SSG)](https://qwik.dev/qwikcity/guides/static-site-generation/).
+1. Navega a la carpeta del proyecto:
 
-```shell
-npm run qwik add # or `yarn qwik add`
+```bash
+cd qwikApp
 ```
 
-## Development
+2. Instala las dependencias:
 
-Development mode uses [Vite's development server](https://vitejs.dev/). The `dev` command will server-side render (SSR) the output during development.
-
-```shell
-npm start # or `yarn start`
+```bash
+npm install
 ```
 
-> Note: during dev mode, Vite may request a significant number of `.js` files. This does not represent a Qwik production build.
+### Comandos disponibles
+
+- **Iniciar servidor de desarrollo**:
+
+```bash
+npm run dev
+```
+
+o
+
+```bash
+npm start
+```
+
+Abre http://localhost:5173 en tu navegador (con SSR habilitado).
+
+- **Compilar para producción**:
+
+```bash
+npm run build
+```
+
+Genera una compilación optimizada para producción.
+
+- **Compilar solo cliente**:
+
+```bash
+npm run build.client
+```
+
+- **Vista previa de la compilación**:
+
+```bash
+npm run preview
+```
+
+Sirve la compilación de producción localmente.
+
+- **Validar código con ESLint**:
+
+```bash
+npm run lint
+```
+
+- **Formatear código con Prettier**:
+
+```bash
+npm run fmt
+```
+
+- **Validar formato con Prettier**:
+
+```bash
+npm run fmt.check
+```
+
+- **Validar tipos de TypeScript**:
+
+```bash
+npm run build.types
+```
+
+## ℹ️ Información adicional
+
+- [Documentación oficial de Qwik](https://qwik.dev/)
+- [Documentación de Qwik City](https://qwik.dev/qwikcity/)
+- [Discord de Qwik](https://qwik.dev/chat)
+- [GitHub - QwikDev](https://github.com/QwikDev/qwik)
 
 ## Preview
 
