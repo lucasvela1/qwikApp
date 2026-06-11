@@ -75,6 +75,26 @@ body {
   transform: scale(0.97);
 }
 
+.btn-add {
+  background: linear-gradient(
+    135deg,
+    #e8fcf0 0%,
+    #bdf3d5 100%
+  );
+  color: #0e5c33;
+}
+
+.btn-add:hover {
+  transform: translateY(-3px) scale(1.05) rotate(2deg);
+  box-shadow: 0 15px 30px rgba(46, 204, 113, 0.25),
+              0 0 20px rgba(46, 204, 113, 0.15);
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+.btn-add:active {
+  transform: scale(0.97);
+}
+
 .shine {
   position: absolute;
   inset: 0;
@@ -442,4 +462,9 @@ select option {
 .rain-bg > * {
   position: relative;
   z-index: 1;
+}
+
+@keyframes alertDropIn {
+  from { transform: translateY(-50px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }

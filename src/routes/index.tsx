@@ -249,7 +249,6 @@ const buttonStyle = {
   fontWeight: 600,
   border: '1px solid rgba(255,255,255,0.15)',
   borderRadius: '16px',
-  color: '#000',
   cursor: 'pointer',
   display: 'flex' as const,
   alignItems: 'center' as const,
