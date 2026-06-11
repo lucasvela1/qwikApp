@@ -15,6 +15,8 @@ export default component$(() => {
     nuevaLatitud: '',
     nuevaLongitud: '',
     ciudadesGuardadas: {} as Record<string, Ciudad>,
+    alertMessage: '',
+    alertType: '' as 'success' | 'error' | '',
   });
 
   // eslint-disable-next-line qwik/no-use-visible-task
@@ -29,13 +31,31 @@ export default component$(() => {
     }
   });
 
+  const mostrarAlerta = $((msg: string, tipo: 'success' | 'error') => {
+    state.alertMessage = msg;
+    state.alertType = tipo;
+
+    if (tipo === 'success') {
+      setTimeout(() => {
+        state.alertMessage = '';
+        state.alertType = '';
+        nav('/');
+      }, 1500);
+    } else {
+      setTimeout(() => {
+        state.alertMessage = '';
+        state.alertType = '';
+      }, 3500);
+    }
+  });
+
   const agregarCiudad = $(() => {
     const nombre = state.nuevoNombreCiudad.trim();
     const lat = parseFloat(state.nuevaLatitud);
     const lon = parseFloat(state.nuevaLongitud);
 
     if (!nombre || isNaN(lat) || isNaN(lon)) {
-      alert("Por favor completa todos los campos con valores numéricos válidos.");
+      mostrarAlerta("Por favor completa todos los campos con valores numéricos válidos.", "error");
       return;
     }
 
@@ -57,14 +77,22 @@ export default component$(() => {
     state.nuevaLongitud = '';
     state.ciudadesGuardadas = locales;
 
-    alert(`✅ Ciudad "${nombre}" agregada correctamente`);
-    nav('/');
+    mostrarAlerta(`✅ Ciudad "${nombre}" agregada correctamente`, "success");
   });
 
   return (
     <div style={containerStyle}>
       <div style={bgDecorativeStyle}></div>
       
+      {state.alertMessage && (
+        <div style={{
+          ...alertCustomBaseStyle,
+          backgroundColor: state.alertType === 'success' ? '#2ecc71' : '#e74c3c',
+        }}>
+          {state.alertMessage}
+        </div>
+      )}
+
       <header style={headerStyle}>
         <h1 style={titleStyle}>Agregar ubicación</h1>
         <p style={subtitleStyle}>Añade una nueva ciudad personalizada</p>
@@ -100,8 +128,14 @@ export default component$(() => {
           />
         </div>
 
-        <button onClick$={agregarCiudad} style={addButtonStyle}>
-          ➕ Guardar ubicación
+        <button 
+          onClick$={agregarCiudad} 
+          style={addButtonStyle}
+          class="btn-add"
+        >
+          <span class="shine"></span>
+          <span style={buttonIconStyle}>➕</span>
+          Guardar ubicación
         </button>
 
         {Object.keys(state.ciudadesGuardadas).length > 0 && (
@@ -209,20 +243,22 @@ const addButtonStyle = {
   fontWeight: 600,
   border: '1px solid rgba(255,255,255,0.15)',
   borderRadius: '16px',
-  background: '#2ecc71',
-  color: '#fff',
   cursor: 'pointer',
   display: 'flex' as const,
   alignItems: 'center' as const,
   justifyContent: 'center',
   gap: '8px',
   fontFamily: "'Inter', sans-serif",
+  transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
+  backdropFilter: 'blur(10px)',
+  position: 'relative' as const,
+  overflow: 'hidden' as const,
 };
 
 const separadorStyle = {
   width: '100%',
   border: '0',
-  margin: '30px 0',
+  margin: '10px 0',
   background: 'rgba(255, 255, 255, 0.2)',
 };
 
@@ -231,4 +267,22 @@ const formTitleStyle = {
   fontWeight: 600,
   color: '#ffffff',
   marginBottom: '16px',
+};
+
+const alertCustomBaseStyle = {
+  position: 'fixed' as const,
+  top: '24px',
+  padding: '14px 28px',
+  borderRadius: '14px',
+  color: '#ffffff',
+  fontWeight: 600,
+  fontSize: '15px',
+  zIndex: 2000,
+  boxShadow: '0 15px 35px rgba(0,0,0,0.2)',
+  fontFamily: "'Inter', sans-serif",
+  animation: 'alertDropIn 0.3s ease-out',
+};
+
+const buttonIconStyle = {
+  fontSize: '20px',
 };
