@@ -483,18 +483,7 @@ select option {
   height: 200%; 
   
   --c: #09f;
-  /*
-  background-image: 
-    radial-gradient(4px 100px at 30px 150px, var(--c), #0000),
-    radial-gradient(4px 100px at 120px 280px, var(--c), #0000),
-    radial-gradient(1.5px 1.5px at 70px 80px, var(--c) 100%, #0000 150%),
-    radial-gradient(4px 100px at 210px 60px, var(--c), #0000),
-    radial-gradient(4px 100px at 280px 210px, var(--c), #0000),
-    radial-gradient(1.5px 1.5px at 180px 140px, var(--c) 100%, #0000 150%),
-    radial-gradient(4px 100px at 80px 320px, var(--c), #0000),
-    radial-gradient(4px 100px at 250px 390px, var(--c), #0000),
-    radial-gradient(1.5px 1.5px at 290px 220px, var(--c) 100%, #0000 150%);
-  */
+
   background-size: 320px 450px; 
   background-repeat: repeat;
   
@@ -519,15 +508,6 @@ select option {
   background-size: 8px 8px;
   z-index: 2;
 }
-/*
-@keyframes fall {
-  0% {
-    transform: translateY(0);
-  }
-  100% {
-    transform: translateY(50%); 
-  }
-}*/
 
 .rain-bg > * {
   position: relative;
