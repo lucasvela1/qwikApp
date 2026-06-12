@@ -147,6 +147,7 @@ const weatherContainerStyle = {
 const titleHeaderStyle = {
   display: 'flex' as const,
   alignItems: 'center' as const,
+  textAlign: 'left' as const,
   gap: '10px',
 }
 
